@@ -23,18 +23,28 @@
     </div>
 
     <div class="resteAFaire">
-      <p>Nouvelles actions :</p>
-      <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsAFaire }}</div>
+      <div class="boutonreste">
+        <p>Nouvelles actions :</p>
+        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsAFaire }}
+        </div>
+      </div>
 
-      <p>Actions effectuées :</p>
-      <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
+      <div class="boutonreste">
+        <p>Actions effectuées :</p>
+        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}
+        </div>
+      </div>
 
-      <p>Mis de côté: </p>
-      <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}</div>
-      <div v-if="showMisDeCote" class="misDeCoteContent">
-        <div v-for="post in misDeCote" :key="post.id"></div>
+      <div class="boutonreste">
+        <p>Mis de côté: </p>
+        <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}
+        </div>
+        <div v-if="showMisDeCote" class="misDeCoteContent">
+          <div v-for="post in misDeCote" :key="post.id"></div>
+        </div>
       </div>
     </div>
+
 
     <div class="row d-flex justify-content-between" style="">
       <div v-for="post in filteredPosts" :key="post.id" class="col-md-4 col-sm-20 mb-5">
@@ -57,14 +67,15 @@
               <button class="btn btn-primary" @click="resetPostStatus(post)">Réinitialiser</button>
             </div>
             <div v-else>
-  <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
-    {{ post.isDone ? 'Fait' : 'A faire' }}
-  </a>
-  <!-- BOUTON PLUS TARD -->
-  <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;" v-if="!post.isDone">
-    Plus tard
-  </a>
-</div>
+              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
+                {{ post.isDone ? 'Fait' : 'A faire' }}
+              </a>
+              <!-- BOUTON PLUS TARD -->
+              <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;"
+                v-if="!post.isDone">
+                Plus tard
+              </a>
+            </div>
 
           </div>
         </div>
@@ -120,25 +131,25 @@ export default {
       this.updateCounters();
     },
     moveToLater(post) {
-  // Trouver l'index de l'élément dans le tableau des posts
-  const index = this.posts.indexOf(post);
-  // Vérifier si l'élément existe dans le tableau des posts
-  if (index !== -1) {
-    // Retirer l'élément du tableau des posts
-    this.posts.splice(index, 1);
-    // Ajouter l'élément au tableau des éléments mis de côté
-    this.misDeCote.push(post);
-    // Mettre à jour le compteur d'actions à faire et d'actions effectuées
-    this.updateCounters();
+      // Trouver l'index de l'élément dans le tableau des posts
+      const index = this.posts.indexOf(post);
+      // Vérifier si l'élément existe dans le tableau des posts
+      if (index !== -1) {
+        // Retirer l'élément du tableau des posts
+        this.posts.splice(index, 1);
+        // Ajouter l'élément au tableau des éléments mis de côté
+        this.misDeCote.push(post);
+        // Mettre à jour le compteur d'actions à faire et d'actions effectuées
+        this.updateCounters();
 
-    // Sauvegarder la liste des actions mises de côté dans un cookie
-    Cookies.set('misDeCote', JSON.stringify(this.misDeCote));
+        // Sauvegarder la liste des actions mises de côté dans un cookie
+        Cookies.set('misDeCote', JSON.stringify(this.misDeCote));
 
-    // Sauvegarder la liste des actions à faire dans un cookie (après avoir retiré l'action)
-    const actionsAFaire = this.posts.filter((post) => !post.isDone);
-    Cookies.set('actionsAFaire', JSON.stringify(actionsAFaire));
-  }
-},
+        // Sauvegarder la liste des actions à faire dans un cookie (après avoir retiré l'action)
+        const actionsAFaire = this.posts.filter((post) => !post.isDone);
+        Cookies.set('actionsAFaire', JSON.stringify(actionsAFaire));
+      }
+    },
     toggleMisDeCote() {
       this.showMisDeCote = !this.showMisDeCote;
     },
@@ -179,47 +190,47 @@ export default {
     },
   },
   async created() {
-  try {
-    this.loading = true;
-    const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
-    this.loading = false;
+    try {
+      this.loading = true;
+      const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
+      this.loading = false;
 
-    // Map response data and set the `isDone` property based on the cookies
-    this.posts = response.data.map((post) => {
-      const cookieValue = Cookies.get(`post_${post.id}`);
-      if (cookieValue === 'Fait') {
-        post.isDone = true;
-      } else {
-        post.isDone = false;
+      // Map response data and set the `isDone` property based on the cookies
+      this.posts = response.data.map((post) => {
+        const cookieValue = Cookies.get(`post_${post.id}`);
+        if (cookieValue === 'Fait') {
+          post.isDone = true;
+        } else {
+          post.isDone = false;
+        }
+        return post;
+      });
+
+      // Load misDeCote from cookies
+      const misDeCoteCookie = Cookies.get('misDeCote');
+      if (misDeCoteCookie) {
+        // Filter out any items that are already in this.misDeCote to avoid duplicates
+        const misDeCoteFromCookie = JSON.parse(misDeCoteCookie);
+        this.misDeCote = misDeCoteFromCookie.filter(
+          (item) => !this.misDeCote.some((existingItem) => existingItem.id === item.id)
+        );
       }
-      return post;
-    });
 
-    // Load misDeCote from cookies
-    const misDeCoteCookie = Cookies.get('misDeCote');
-    if (misDeCoteCookie) {
-      // Filter out any items that are already in this.misDeCote to avoid duplicates
-      const misDeCoteFromCookie = JSON.parse(misDeCoteCookie);
-      this.misDeCote = misDeCoteFromCookie.filter(
-        (item) => !this.misDeCote.some((existingItem) => existingItem.id === item.id)
+      // Filter out actions from this.posts that are in this.misDeCote to avoid duplicates
+      this.posts = this.posts.filter(
+        (post) => !this.misDeCote.some((item) => item.id === post.id)
       );
+
+      // Update counters once data is loaded
+      this.updateCounters();
+    } catch (error) {
+      this.loading = false;
+      this.error = `Une erreur s'est produite : ${error.message}`;
     }
 
-    // Filter out actions from this.posts that are in this.misDeCote to avoid duplicates
-    this.posts = this.posts.filter(
-      (post) => !this.misDeCote.some((item) => item.id === post.id)
-    );
-
-    // Update counters once data is loaded
-    this.updateCounters();
-  } catch (error) {
-    this.loading = false;
-    this.error = `Une erreur s'est produite : ${error.message}`;
+    const params = new URLSearchParams(window.location.search);
+    this.id = params.get('id');
   }
-
-  const params = new URLSearchParams(window.location.search);
-  this.id = params.get('id');
-}
 
 };
 </script>
@@ -343,6 +354,12 @@ export default {
 
   }
 
+  .boutonreste {
+    display: flex;
+    flex-direction: row;
+    width: 200px
+  }
+
 }
 
 @media only screen and (max-width: 767px) {
@@ -355,8 +372,9 @@ export default {
   }
 
   .typeAction {
-    width: 50vw;
-    height: 60vh;
+    width: auto;
+    height: auto;
+    padding: 5%;
     margin-top: 10px;
     background-color: rgb(49, 104, 54);
     display: flex;
@@ -365,6 +383,7 @@ export default {
     align-items: center;
     color: black;
     font-weight: bold;
+    text-align: center;
   }
 
   .typeActionBouton {
@@ -395,11 +414,11 @@ export default {
 
   .resteAFaire {
     margin-top: 2%;
-    width: 70vw;
+    width: 80vw;
     height: 20vh;
     display: flex;
     flex-direction: row;
-
+    justify-content: space-between
   }
 
   .resteAFaireBouton {
@@ -439,4 +458,10 @@ export default {
     background-color: rgb(49, 104, 54);
     color: white;
   }
-}</style>
+
+  .card {
+    width: 90% !important;
+    margin: auto;
+  }
+}
+</style>
