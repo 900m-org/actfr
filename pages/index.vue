@@ -192,7 +192,7 @@ export default {
   async created() {
     try {
       this.loading = true;
-      const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
+      const response = await axios.get('https://my-json-server.typicode.com/900m-org/actdbfr/posts');
       this.loading = false;
 
       // Map response data and set the `isDone` property based on the cookies
