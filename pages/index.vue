@@ -28,12 +28,12 @@
 
       <p>Actions effectuées :</p>
       <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
-<!-- MISE DE COTE
+
       <p>Mis de côté: </p>
       <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}</div>
       <div v-if="showMisDeCote" class="misDeCoteContent">
         <div v-for="post in misDeCote" :key="post.id"></div>
-      </div>-->
+      </div>
     </div>
 
     <div class="row d-flex justify-content-between" style="">
@@ -57,14 +57,15 @@
               <button class="btn btn-primary" @click="resetPostStatus(post)">Réinitialiser</button>
             </div>
             <div v-else>
-              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
-                {{ post.isDone ? 'Fait' : 'A faire' }}
-              </a>
-              <!-- BOUTON PLUS TARD
-              <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;">
-                Plus tard
-              </a>  -->
-            </div>
+  <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
+    {{ post.isDone ? 'Fait' : 'A faire' }}
+  </a>
+  <!-- BOUTON PLUS TARD -->
+  <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;" v-if="!post.isDone">
+    Plus tard
+  </a>
+</div>
+
           </div>
         </div>
       </div>
@@ -87,6 +88,7 @@ export default {
       selectedType: '', // Nouvelle propriété pour stocker le type d'action sélectionné
       selectedTemps: '', // Nouvelle propriété pour stocker le temps sélectionné
       showMisDeCote: false,
+
     };
   },
   methods: {
@@ -118,21 +120,25 @@ export default {
       this.updateCounters();
     },
     moveToLater(post) {
-      // Trouver l'index de l'élément dans le tableau des posts
-      const index = this.posts.indexOf(post);
-      // Vérifier si l'élément existe dans le tableau des posts
-      if (index !== -1) {
-        // Retirer l'élément du tableau des posts
-        this.posts.splice(index, 1);
-        // Ajouter l'élément au tableau des éléments mis de côté
-        this.misDeCote.push(post);
-        // Mettre à jour le compteur d'actions à faire et d'actions effectuées
-        this.updateCounters();
+  // Trouver l'index de l'élément dans le tableau des posts
+  const index = this.posts.indexOf(post);
+  // Vérifier si l'élément existe dans le tableau des posts
+  if (index !== -1) {
+    // Retirer l'élément du tableau des posts
+    this.posts.splice(index, 1);
+    // Ajouter l'élément au tableau des éléments mis de côté
+    this.misDeCote.push(post);
+    // Mettre à jour le compteur d'actions à faire et d'actions effectuées
+    this.updateCounters();
 
-        // Sauvegarder la liste des actions mises de côté dans un cookie
-        Cookies.set('misDeCote', JSON.stringify(this.misDeCote));
-      }
-    },
+    // Sauvegarder la liste des actions mises de côté dans un cookie
+    Cookies.set('misDeCote', JSON.stringify(this.misDeCote));
+
+    // Sauvegarder la liste des actions à faire dans un cookie (après avoir retiré l'action)
+    const actionsAFaire = this.posts.filter((post) => !post.isDone);
+    Cookies.set('actionsAFaire', JSON.stringify(actionsAFaire));
+  }
+},
     toggleMisDeCote() {
       this.showMisDeCote = !this.showMisDeCote;
     },
@@ -173,41 +179,48 @@ export default {
     },
   },
   async created() {
-    try {
-      this.loading = true;
-      const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
-      this.loading = false;
+  try {
+    this.loading = true;
+    const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
+    this.loading = false;
 
-      // Map response data and set the `isDone` property based on the cookies
-      this.posts = response.data.map((post) => {
-        const cookieValue = Cookies.get(`post_${post.id}`);
-        if (cookieValue === 'Fait') {
-          post.isDone = true;
-        } else {
-          post.isDone = false;
-        }
-        return post;
-      });
-
-      // Update counters once data is loaded
-      this.updateCounters();
-
-      // Display misDeCote array in the console
-      console.log('misDeCote:', this.misDeCote);
-
-      // Load misDeCote from cookies
-      const misDeCoteCookie = Cookies.get('misDeCote');
-      if (misDeCoteCookie) {
-        this.misDeCote = JSON.parse(misDeCoteCookie);
+    // Map response data and set the `isDone` property based on the cookies
+    this.posts = response.data.map((post) => {
+      const cookieValue = Cookies.get(`post_${post.id}`);
+      if (cookieValue === 'Fait') {
+        post.isDone = true;
+      } else {
+        post.isDone = false;
       }
-    } catch (error) {
-      this.loading = false;
-      this.error = `Une erreur s'est produite : ${error.message}`;
+      return post;
+    });
+
+    // Load misDeCote from cookies
+    const misDeCoteCookie = Cookies.get('misDeCote');
+    if (misDeCoteCookie) {
+      // Filter out any items that are already in this.misDeCote to avoid duplicates
+      const misDeCoteFromCookie = JSON.parse(misDeCoteCookie);
+      this.misDeCote = misDeCoteFromCookie.filter(
+        (item) => !this.misDeCote.some((existingItem) => existingItem.id === item.id)
+      );
     }
 
-    const params = new URLSearchParams(window.location.search);
-    this.id = params.get('id');
-  },
+    // Filter out actions from this.posts that are in this.misDeCote to avoid duplicates
+    this.posts = this.posts.filter(
+      (post) => !this.misDeCote.some((item) => item.id === post.id)
+    );
+
+    // Update counters once data is loaded
+    this.updateCounters();
+  } catch (error) {
+    this.loading = false;
+    this.error = `Une erreur s'est produite : ${error.message}`;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  this.id = params.get('id');
+}
+
 };
 </script>
 
