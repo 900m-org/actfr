@@ -16,10 +16,4 @@
   "dependencies": {
     "js-cookie": "^3.0.5"
   }
- "config": {
-    "nuxt": {
-      "host": "0.0.0.0",
-      "port": "80"
-    }
-  }
 }
