@@ -3,15 +3,21 @@
     <div class="typeAction">
       <div class="filtre">
         <p class="Ok" style="color: white; font-weight: bold;">Type d'action :</p>
-        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Informer' }" @click="filterByType('Informer')">S'informer</div>
-        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Participer' }" @click="filterByType('Participer')">Participer</div>
-        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Entreprendre' }" @click="filterByType('Entreprendre')">Entreprendre</div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Informer' }"
+          @click="filterByType('Informer')">S'informer</div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Participer' }"
+          @click="filterByType('Participer')">Participer</div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedType === 'Entreprendre' }"
+          @click="filterByType('Entreprendre')">Entreprendre</div>
       </div>
       <div class="filtre">
         <p class="Ok" style="color: white; font-weight: bold;">Durée :</p>
-        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '5' }" @click="filterByTemps('5')">5 minutes</div>
-        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '20' }" @click="filterByTemps('20')">20 minutes</div>
-        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '45' }" @click="filterByTemps('45')">45 minutes et +</div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '5' }" @click="filterByTemps('5')">5 minutes
+        </div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '20' }" @click="filterByTemps('20')">20
+          minutes</div>
+        <div class="typeActionBouton" :class="{ 'selected': selectedTemps === '45' }" @click="filterByTemps('45')">45
+          minutes et +</div>
 
       </div>
     </div>
@@ -22,14 +28,15 @@
 
       <p>Actions effectuées :</p>
       <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
-      <!-- <p>Mis de côté: </p>
+<!-- MISE DE COTE
+      <p>Mis de côté: </p>
       <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}</div>
       <div v-if="showMisDeCote" class="misDeCoteContent">
         <div v-for="post in misDeCote" :key="post.id"></div>
-      </div> -->
+      </div>-->
     </div>
 
-    <div class="row">
+    <div class="row d-flex justify-content-between" style="">
       <div v-for="post in filteredPosts" :key="post.id" class="col-md-4 col-sm-20 mb-5">
         <div class="card">
           <div class="card-body" :style="{ 'background-color': misDeCote.includes(post) ? '#FFCCCC' : '#DDECCB' }">
@@ -43,7 +50,7 @@
                 <p style="font-weight: bold; margin-top: 5%;">{{ post.type }}</p>
               </div>
             </div>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla harum dolorum inventore eos cupiditate atque impedit eligendi ratione veniam, esse aliquam nesciunt totam? Quidem quis saepe velit excepturi dolore ad.</p>
+            <p class="card-text">{{ post.description }}</p>
 
             <!-- Affichage conditionnel du bouton Réinitialiser ou des boutons Fait/Plus tard -->
             <div v-if="misDeCote.includes(post)">
@@ -51,11 +58,12 @@
             </div>
             <div v-else>
               <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
-          {{ post.isDone ? 'Fait' : 'A faire' }}
-        </a>
-                <!--  <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;">
+                {{ post.isDone ? 'Fait' : 'A faire' }}
+              </a>
+              <!-- BOUTON PLUS TARD
+              <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;">
                 Plus tard
-              </a> -->
+              </a>  -->
             </div>
           </div>
         </div>
@@ -165,41 +173,41 @@ export default {
     },
   },
   async created() {
-  try {
-    this.loading = true;
-    const response = await axios.get('https://my-json-server.typicode.com/bastien64/m/posts');
-    this.loading = false;
+    try {
+      this.loading = true;
+      const response = await axios.get('https://my-json-server.typicode.com/900m-org/db/posts');
+      this.loading = false;
 
-    // Map response data and set the `isDone` property based on the cookies
-    this.posts = response.data.map((post) => {
-      const cookieValue = Cookies.get(`post_${post.id}`);
-      if (cookieValue === 'Fait') {
-        post.isDone = true;
-      } else {
-        post.isDone = false;
+      // Map response data and set the `isDone` property based on the cookies
+      this.posts = response.data.map((post) => {
+        const cookieValue = Cookies.get(`post_${post.id}`);
+        if (cookieValue === 'Fait') {
+          post.isDone = true;
+        } else {
+          post.isDone = false;
+        }
+        return post;
+      });
+
+      // Update counters once data is loaded
+      this.updateCounters();
+
+      // Display misDeCote array in the console
+      console.log('misDeCote:', this.misDeCote);
+
+      // Load misDeCote from cookies
+      const misDeCoteCookie = Cookies.get('misDeCote');
+      if (misDeCoteCookie) {
+        this.misDeCote = JSON.parse(misDeCoteCookie);
       }
-      return post;
-    });
-
-    // Update counters once data is loaded
-    this.updateCounters();
-
-    // Display misDeCote array in the console
-    console.log('misDeCote:', this.misDeCote);
-
-    // Load misDeCote from cookies
-    const misDeCoteCookie = Cookies.get('misDeCote');
-    if (misDeCoteCookie) {
-      this.misDeCote = JSON.parse(misDeCoteCookie);
+    } catch (error) {
+      this.loading = false;
+      this.error = `Une erreur s'est produite : ${error.message}`;
     }
-  } catch (error) {
-    this.loading = false;
-    this.error = `Une erreur s'est produite : ${error.message}`;
-  }
 
-  const params = new URLSearchParams(window.location.search);
-  this.id = params.get('id');
-},
+    const params = new URLSearchParams(window.location.search);
+    this.id = params.get('id');
+  },
 };
 </script>
 
@@ -304,9 +312,7 @@ export default {
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.13);
   }
 
-  .row {
-    max-width: 90vw;
-  }
+
   .btn.fait {
     background-color: rgba(0, 128, 0, 0.50);
     color: white;
@@ -314,8 +320,14 @@ export default {
 
   /* Styles pour le bouton "A faire" */
   .btn.a-faire {
-    background-color:rgb(49, 104, 54);
+    background-color: rgb(49, 104, 54);
     color: white;
+  }
+
+  .card-body {
+    width: 300px !important;
+
+
   }
 
 }
@@ -367,6 +379,7 @@ export default {
     color: white;
     /* Nouvelle couleur du texte */
   }
+
   .resteAFaire {
     margin-top: 2%;
     width: 70vw;
@@ -402,6 +415,7 @@ export default {
     border-radius: 10px;
     margin-left: 5%;
   }
+
   .btn.fait {
     background-color: rgba(0, 128, 0, 0.50);
     color: white;
@@ -412,5 +426,4 @@ export default {
     background-color: rgb(49, 104, 54);
     color: white;
   }
-}
-</style>
+}</style>
