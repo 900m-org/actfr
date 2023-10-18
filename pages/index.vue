@@ -284,7 +284,9 @@ export default {
     border-radius: 10px;
     margin-left: 5%;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.13);
+    cursor: pointer
   }
+
 
   .typeActionBouton:hover {
     background-color: rgb(53, 119, 58);
@@ -301,7 +303,7 @@ export default {
   .resteAFaire {
     margin-top: 2%;
     width: 90vw;
-    height: 20vh;
+    height: 10vh;
     display: flex;
     flex-direction: row;
 
@@ -348,16 +350,19 @@ export default {
     color: white;
   }
 
+  .card {
+    border : white
+  }
   .card-body {
     width: 300px !important;
-
 
   }
 
   .boutonreste {
     display: flex;
     flex-direction: row;
-    width: 200px
+    width: 200px;
+    cursor: pointer
   }
 
 }
