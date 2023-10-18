@@ -24,30 +24,28 @@
 
     <div class="resteAFaire">
       <div class="boutonreste">
-        <p>Nouvelles actions :</p>
-        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsAFaire }}
-        </div>
+        <p :class="{ 'bold-text': showMisDeCote }" class="action">Nouvelles actions :</p>
+        <div class="resteAFaireBouton" @click="showAllAction"> {{ countActionsAFaire }}</div>
       </div>
 
       <div class="boutonreste">
-        <p>Actions effectuées :</p>
-        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}
-        </div>
+        <p :class="{ 'bold-text': showMisDeCote }" class="action">Actions effectuées :</p>
+        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
       </div>
-
-      <div class="boutonreste">
+      <div class="boutonreste" :class="{ 'active': showMisDeCote }">
         <p>Mis de côté: </p>
-        <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}
-        </div>
+        <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}</div>
+
         <div v-if="showMisDeCote" class="misDeCoteContent">
           <div v-for="post in misDeCote" :key="post.id"></div>
         </div>
       </div>
+
     </div>
 
 
-    <div class="row d-flex justify-content-between" style="">
-      <div v-for="post in filteredPosts" :key="post.id" class="col-md-4 col-sm-20 mb-5">
+    <div class="row d-flex justify-content-between" style="margin: auto; width: 80%;">
+      <div v-for="post in filteredPosts" :key="post.id" class="col-md-4 col-sm-20 mb-5" style="margin-top: -25px ;">
         <div class="card">
           <div class="card-body" :style="{ 'background-color': misDeCote.includes(post) ? '#FFCCCC' : '#DDECCB' }">
             <h3 class="card-title" style="font-weight: bold;">{{ post.title }}</h3>
@@ -103,6 +101,10 @@ export default {
     };
   },
   methods: {
+    showAllAction() {
+      this.showMisDeCote = false;
+
+    },
     resetPostStatus(post) {
       const index = this.misDeCote.indexOf(post);
       if (index !== -1) {
@@ -303,10 +305,9 @@ export default {
   .resteAFaire {
     margin-top: 2%;
     width: 90vw;
-    height: 10vh;
+    height: 75px;
     display: flex;
     flex-direction: row;
-
   }
 
   .resteAFaireBouton {
@@ -322,6 +323,7 @@ export default {
     margin-left: 2%;
     margin-right: 2%;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.13);
+    cursor: pointer!important;
   }
 
   .typeActionDescription {
@@ -351,10 +353,12 @@ export default {
   }
 
   .card {
-    border : white
+    border: white;
   }
+
   .card-body {
     width: 300px !important;
+
 
   }
 
@@ -362,7 +366,24 @@ export default {
     display: flex;
     flex-direction: row;
     width: 200px;
-    cursor: pointer
+
+  }
+
+  .active {
+    color: green;
+    /* Changer la couleur en fonction de votre préférence */
+    font-weight: bold;
+  }
+
+  .action {
+    color: green;
+    font-weight: bold;
+    cursor: default!important;
+  }
+
+  .bold-text {
+    font-weight: 400 !important;
+    color: black !important;
   }
 
 }
@@ -468,5 +489,22 @@ export default {
     width: 90% !important;
     margin: auto;
   }
-}
-</style>
+
+  .active {
+    color: green;
+    /* Changer la couleur en fonction de votre préférence */
+    font-weight: bold;
+  }
+
+  .action {
+    color: green;
+    font-weight: bold;
+    cursor: default!important;
+  }
+
+  .bold-text {
+    font-weight: 400 !important;
+    color: black !important;
+  }
+
+}</style>
