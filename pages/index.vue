@@ -304,10 +304,11 @@ export default {
 
   .resteAFaire {
     margin-top: 2%;
-    width: 90vw;
+    width: 70vw;
     height: 75px;
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
   }
 
   .resteAFaireBouton {
