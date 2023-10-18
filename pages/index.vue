@@ -366,7 +366,7 @@ export default {
   .boutonreste {
     display: flex;
     flex-direction: row;
-    width: 200px;
+    width: 250px;
 
   }
 
