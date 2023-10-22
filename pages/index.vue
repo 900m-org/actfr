@@ -25,7 +25,7 @@
     <div class="resteAFaire">
       <div class="boutonreste">
         <p :class="{ 'bold-text': showMisDeCote }" class="action">Nouvelles actions :</p>
-        <div class="resteAFaireBouton" @click="showAllAction"> {{ countActionsAFaire }}</div>
+        <div class="resteAFaireBouton" :class="{ 'bold-text': showMisDeCote }"  @click="showAllAction"> {{ countActionsAFaire }}</div>
       </div>
 
       <div class="boutonreste">
@@ -406,11 +406,15 @@ export default {
     background-color: rgb(49, 104, 54);
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     color: black;
     font-weight: bold;
     text-align: center;
+  }
+
+  .filtre {
+    margin-left: 10px;
   }
 
   .typeActionBouton {
@@ -427,6 +431,11 @@ export default {
     margin-left: 5%;
   }
 
+  .boutonreste {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
   .typeActionBouton:hover {
     background-color: rgb(49, 104, 54);
     color: white;
@@ -441,11 +450,12 @@ export default {
 
   .resteAFaire {
     margin-top: 2%;
-    width: 80vw;
-    height: 20vh;
+    width: 90vw;
+    height: 10vh;
     display: flex;
     flex-direction: row;
-    justify-content: space-between
+    justify-content: space-between;
+    font-size: smaller;
   }
 
   .resteAFaireBouton {
