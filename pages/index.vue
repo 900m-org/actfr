@@ -479,6 +479,7 @@ export default {
     justify-content: center;
     align-items: center;
     position: fixed;
+    margin-top: -60%;
     top: 0;
     right: 0;
     bottom: 0;
@@ -490,7 +491,7 @@ export default {
     background-color: rgb(221, 236, 203);
     padding: 20px;
     max-width: 90%;
-    max-height: 80%;
+    max-height: 100%;
     overflow: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
