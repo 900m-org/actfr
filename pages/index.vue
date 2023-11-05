@@ -25,7 +25,8 @@
     <div class="resteAFaire">
       <div class="boutonreste">
         <p :class="{ 'bold-text': showMisDeCote }" class="action">Nouvelles actions :</p>
-        <div class="resteAFaireBouton" :class="{ 'bold-text': showMisDeCote }"  @click="showAllAction"> {{ countActionsAFaire }}</div>
+        <div class="resteAFaireBouton" :class="{ 'bold-text': showMisDeCote }" @click="showAllAction"> {{
+          countActionsAFaire }}</div>
       </div>
 
       <div class="boutonreste">
@@ -45,8 +46,9 @@
 
 
     <div class="row d-flex justify-content-between" style="margin: auto; width: 80%;">
-      <div v-for="post in filteredPosts" :key="post.id" class="col-md-4 col-sm-20 mb-5" style="margin-top: -25px ;">
-        <div class="card">
+      <div v-for="post in filteredPosts" :key="post.id"
+        class="col-md-4 col-sm-20 mb-5 d-flex align-items-center justify-content-center" style="margin-top: -25px ;">
+        <div class="card" @click="cardClicked = post">
           <div class="card-body" :style="{ 'background-color': misDeCote.includes(post) ? '#FFCCCC' : '#DDECCB' }">
             <h3 class="card-title" style="font-weight: bold;">{{ post.title }}</h3>
             <div style="display: flex; flex-direction: row;">
@@ -62,15 +64,16 @@
 
             <!-- Affichage conditionnel du bouton Réinitialiser ou des boutons Fait/Plus tard -->
             <div v-if="misDeCote.includes(post)">
-              <button class="btn btn-primary" @click="resetPostStatus(post)">Réinitialiser</button>
+              <button class="btn btn-primary" @click.stop="resetPostStatus(post)">Réinitialiser</button>
             </div>
             <div v-else>
-              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']" @click="togglePostStatus(post)">
+              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']"
+                @click.stop="togglePostStatus(post)">
                 {{ post.isDone ? 'Fait' : 'A faire' }}
               </a>
               <!-- BOUTON PLUS TARD -->
-              <a href="#" class="btn btn-warning" @click="moveToLater(post)" style="margin-left: 10px !important;"
-                v-if="!post.isDone">
+              <a href="#" class="btn btn-warning" @click.stop="moveToLater(post)"
+                style="margin-left: 10px !important; font-weight: bold; color: white;" v-if="!post.isDone">
                 Plus tard
               </a>
             </div>
@@ -79,6 +82,42 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="modal" v-if="cardClicked">
+    <div class="modal-content">
+      <!-- Contenu agrandi de la carte -->
+      <h3 class="card-title" style="font-weight: bold;">{{ cardClicked.title }}</h3>
+      <div style="display: flex; flex-direction: row;">
+        <p>
+          <img src="../public/photos/temps(1).png" alt="" style="max-width: 20px; margin-right: 5px;" />
+          {{ cardClicked.temps }} minutes
+        </p>
+        <div class="typeActionDescription">
+          <p style="font-weight: bold; margin-top: 5%;">{{ cardClicked.type }}</p>
+        </div>
+      </div>
+      <p style="font-weight: bold; color:black">Pour quoi Faire :</p>
+      <p class="card-text">{{ cardClicked.description }}</p>
+      <!-- CONDITION 1  -->
+      <div v-if="cardClicked.comment != ''" style="">
+        <p style="font-weight: bold; color:black; margin-bottom: 0px;">Comment Faire :</p>
+        <p style="margin-bottom: 10px" class="card-text">{{ cardClicked.comment }}</p>
+      </div>
+      <div v-else>
+      </div>
+
+      <!-- CONDITION 2 -->
+      <div v-if="cardClicked.lien != ''">
+        <p style="font-weight: bold; color:black; margin-bottom: 0px;">Lien :</p>
+        <a  :href="cardClicked.lien" target="_blank" rel="noopener noreferrer">{{ cardClicked.lien }}</a>
+      </div>
+      <div v-else>
+      </div>
+      <button style="margin-top: 10px;" class="btn btn-primary" @click="cardClicked = null">Fermer</button>
+    </div>
+
+
   </div>
 </template>
 
@@ -97,6 +136,7 @@ export default {
       selectedType: '', // Nouvelle propriété pour stocker le type d'action sélectionné
       selectedTemps: '', // Nouvelle propriété pour stocker le temps sélectionné
       showMisDeCote: false,
+      cardClicked: null,
 
     };
   },
@@ -240,6 +280,27 @@ export default {
 
 <style>
 @media only screen and (min-width: 767px) {
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: rgb(221, 236, 203);
+    padding: 20px;
+    max-width: 40%;
+    max-height: 80%;
+    overflow: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
 
   .bodyPage {
     width: 100vw;
@@ -324,7 +385,7 @@ export default {
     margin-left: 2%;
     margin-right: 2%;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.13);
-    cursor: pointer!important;
+    cursor: pointer !important;
   }
 
   .typeActionDescription {
@@ -341,15 +402,21 @@ export default {
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.13);
   }
 
-
   .btn.fait {
     background-color: rgba(0, 128, 0, 0.50);
     color: white;
+    cursor: pointer !important;
   }
 
   /* Styles pour le bouton "A faire" */
   .btn.a-faire {
     background-color: rgb(49, 104, 54);
+    color: white;
+    cursor: pointer !important;
+  }
+
+  .btn.a-faire:hover {
+    background-color: rgba(0, 255, 0, 0.5);
     color: white;
   }
 
@@ -357,8 +424,20 @@ export default {
     border: white;
   }
 
+  .card-body:hover {
+    background-color: white !important;
+    transition: 1s;
+  }
+
+  .btn-warning:hover {
+    background-color: rgb(255, 165, 0);
+    color: white;
+  }
+
+
   .card-body {
     width: 300px !important;
+    cursor: pointer !important;
 
 
   }
@@ -379,7 +458,7 @@ export default {
   .action {
     color: green;
     font-weight: bold;
-    cursor: default!important;
+    cursor: default !important;
   }
 
   .bold-text {
@@ -390,6 +469,27 @@ export default {
 }
 
 @media only screen and (max-width: 767px) {
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: rgb(221, 236, 203);
+    padding: 20px;
+    max-width: 90%;
+    max-height: 80%;
+    overflow: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
   .bodyPage {
     width: 100vw;
     display: flex;
@@ -436,6 +536,7 @@ export default {
     flex-direction: row;
     justify-content: center;
   }
+
   .typeActionBouton:hover {
     background-color: rgb(49, 104, 54);
     color: white;
@@ -510,7 +611,7 @@ export default {
   .action {
     color: green;
     font-weight: bold;
-    cursor: default!important;
+    cursor: default !important;
   }
 
   .bold-text {
@@ -518,4 +619,5 @@ export default {
     color: black !important;
   }
 
-}</style>
+}
+</style>
