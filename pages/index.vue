@@ -47,7 +47,7 @@
 
     <div class="row d-flex justify-content-between" style="margin: auto; width: 80%;">
       <div v-for="post in filteredPosts" :key="post.id"
-        class="col-md-4 col-sm-20 mb-5 d-flex align-items-center justify-content-center" style="margin-top: -25px ;">
+        class="col-md-4 col-sm-20 mb-5 d-flex align-items-space-around justify-content-space-around" style="margin-top: -25px ;">
         <div class="card" @click="cardClicked = post">
           <div class="card-body" :style="{ 'background-color': misDeCote.includes(post) ? '#FFCCCC' : '#DDECCB' }">
             <h3 class="card-title" style="font-weight: bold;">{{ post.title }}</h3>
@@ -421,6 +421,8 @@ export default {
   }
 
   .card {
+    min-height: 300px; /* Ajustez la valeur à la hauteur minimale souhaitée */
+    max-width: 300px !important;
     border: white;
   }
 
@@ -438,6 +440,9 @@ export default {
   .card-body {
     width: 300px !important;
     cursor: pointer !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
 
   }
