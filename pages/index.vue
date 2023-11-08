@@ -24,15 +24,19 @@
 
     <div class="resteAFaire">
       <div class="boutonreste">
-        <p :class="{ 'bold-text': showMisDeCote }" class="action">Nouvelles actions :</p>
-        <div class="resteAFaireBouton" :class="{ 'bold-text': showMisDeCote }" @click="showAllAction"> {{
+        <p :class="{ 'bold-text': showMisDeCote }" class=" action2">Nouvelles actions :</p>
+        <div class="resteAFaireBouton" @click="showAllAction"> {{
           countActionsAFaire }}</div>
       </div>
 
       <div class="boutonreste">
-        <p :class="{ 'bold-text': showMisDeCote }" class="action">Actions effectuées :</p>
-        <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
-      </div>
+        <p :class="{
+  'bold-text': showMisDeCote && !(countActionsFaites >= 1),
+  'bold-text2': countActionsFaites >= 1 && !showMisDeCote
+}" class="action">Actions effectuées :</p>
+  <div class="resteAFaireBouton" @click="showAllAction">{{ countActionsFaites }}</div>
+</div>
+
       <div class="boutonreste" :class="{ 'active': showMisDeCote }">
         <p>Mis de côté: </p>
         <div class="resteAFaireBouton" @click="toggleMisDeCote">{{ misDeCote.length }}</div>
@@ -67,7 +71,7 @@
               <button class="btn btn-primary" @click.stop="resetPostStatus(post)">Réinitialiser</button>
             </div>
             <div v-else>
-              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action']"
+              <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action3']"
                 @click.stop="togglePostStatus(post)">
                 {{ post.isDone ? 'Fait' : 'A faire' }}
               </a>
@@ -129,6 +133,7 @@ export default {
   data() {
     return {
       loading: false,
+      isMisDeCoteActive: false, 
       posts: [],
       misDeCote: [],
       error: null,
@@ -193,8 +198,8 @@ export default {
       }
     },
     toggleMisDeCote() {
-      this.showMisDeCote = !this.showMisDeCote;
-    },
+      this.showMisDeCote = !this.showMisDeCote;},
+
     updateCounters() {
       const actionsAFaire = this.posts.filter((post) => !post.isDone).length;
       const actionsFaites = this.posts.filter((post) => post.isDone).length;
@@ -455,22 +460,35 @@ export default {
   }
 
   .active {
-    color: green;
+    color: rgb(253, 237, 9);
     /* Changer la couleur en fonction de votre préférence */
     font-weight: bold;
   }
 
-  .action {
-    color: green;
-    font-weight: bold;
+  .action2 {
+    color: green !important;
+    font-weight: 900 !important;
     cursor: default !important;
   }
 
-  .bold-text {
-    font-weight: 400 !important;
-    color: black !important;
+  .action3 {
+    color: white !important;
+
   }
 
+  .action {
+    color: black !important;
+
+  }
+  .bold-text {
+    color: rgb(0, 0, 0) !important;
+    font-weight: 400 !important;
+  }
+
+  .bold-text2 {
+    color: green !important;
+    font-weight: 900 !important;
+  }
 }
 
 @media only screen and (max-width: 767px) {
@@ -608,21 +626,36 @@ export default {
     margin: auto;
   }
 
+
   .active {
-    color: green;
+    color: rgb(253, 237, 9);
     /* Changer la couleur en fonction de votre préférence */
     font-weight: bold;
   }
 
-  .action {
-    color: green;
-    font-weight: bold;
+  .action2 {
+    color: green !important;
+    font-weight: 900 !important;
     cursor: default !important;
   }
 
-  .bold-text {
-    font-weight: 400 !important;
+  .action3 {
+    color: white !important;
+
+  }
+
+  .action {
     color: black !important;
+
+  }
+  .bold-text {
+    color: rgb(0, 0, 0) !important;
+    font-weight: 400 !important;
+  }
+
+  .bold-text2 {
+    color: green !important;
+    font-weight: 900 !important;
   }
 
 }
