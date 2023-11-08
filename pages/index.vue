@@ -73,7 +73,7 @@
             <div v-else>
               <a href="#" :class="['btn', post.isDone ? 'fait' : 'a-faire', 'action3']"
                 @click.stop="togglePostStatus(post)">
-                {{ post.isDone ? 'Fait' : 'A faire' }}
+                {{ post.isDone ? 'A faire' : 'Fait' }}
               </a>
               <!-- BOUTON PLUS TARD -->
               <a href="#" class="btn btn-warning" @click.stop="moveToLater(post)"
@@ -431,6 +431,10 @@ export default {
     border: white;
   }
 
+  h3 {
+    font-size: 23px;
+  }
+
   .card-body:hover {
     background-color: white !important;
     transition: 1s;
@@ -447,7 +451,7 @@ export default {
     cursor: pointer !important;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
 
 
   }
@@ -456,8 +460,9 @@ export default {
     display: flex;
     flex-direction: row;
     width: 250px;
-
+    height: auto;
   }
+
 
   .active {
     color: rgb(253, 237, 9);
@@ -486,8 +491,8 @@ export default {
   }
 
   .bold-text2 {
-    color: green !important;
-    font-weight: 900 !important;
+    color: rgb(0, 0, 0) !important;
+    font-weight: 400 !important;
   }
 }
 
@@ -593,8 +598,8 @@ export default {
     color: black;
     font-weight: bold;
     border-radius: 10px;
-    margin-left: 2%;
-    margin-right: 2%;
+    margin-left: -5%;
+    margin-right: 10%;
   }
 
   .typeActionDescription {
@@ -627,6 +632,9 @@ export default {
   }
 
 
+  h3 {
+    font-size: 23px;
+  }
   .active {
     color: rgb(253, 237, 9);
     /* Changer la couleur en fonction de votre préférence */
@@ -654,8 +662,8 @@ export default {
   }
 
   .bold-text2 {
-    color: green !important;
-    font-weight: 900 !important;
+    color: rgb(0, 0, 0) !important;
+    font-weight: 400 !important;
   }
 
 }
