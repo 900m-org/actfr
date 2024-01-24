@@ -61,7 +61,7 @@
                 {{ post.temps }} minutes
               </p>
               <div class="typeActionDescription">
-                <p style="font-weight: bold; margin-top: 5%;">{{ post.type }}</p>
+                <p style="font-weight: bold; margin :auto">{{ post.type }}</p>
               </div>
             </div>
             <p class="card-text">{{ post.description }}</p>
